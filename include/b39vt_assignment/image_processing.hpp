@@ -6,6 +6,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <iostream>
+#include <string>
+#include <sstream>
 
 std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& templ);
 // Your code goes here

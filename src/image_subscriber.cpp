@@ -76,9 +76,9 @@ int main(int argc, char** argv)
   															 "/home/turtlebot/radioactive.png" ,
   															 "/home/turtlebot/smoking.png" ,
   															 "/home/turtlebot/toxic.png"};
+ 
   
-  
-  while (ros::ok())
+  while (ros::ok()) 
   {
 		if (ic.data_valid)
 		{
@@ -86,8 +86,10 @@ int main(int argc, char** argv)
 			cv::Mat im = ic.getImage();
 		  for( int i = 0; i < 8; i++){
 			  cv::Mat sign = cv::imread(image_array[i]);
-			  cv::resize(sign, sign, cv::Size(50,50));
-				templateMatching(im, sign);
+			  cv::resize(sign, sign, cv::Size(200,200));
+				std::vector<cv::DMatch> matches = templateMatching(im, 			sign);
+				std::cout<<"number of matches: "<< matches.size();
+				
 			}
 		}
   	ros::spinOnce();
