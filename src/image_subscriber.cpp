@@ -77,21 +77,21 @@ int main(int argc, char** argv)
   															 "/home/turtlebot/smoking.png" ,
   															 "/home/turtlebot/toxic.png"};
   
-  for( int i = 0; i < 8; i++){
-  cv::Mat sign = cv::imread(image_array[i]);
   
   while (ros::ok())
   {
 		if (ic.data_valid)
 		{
-			cv::resize(sign, sign, cv::Size(50,50));
-			cv::Mat im = ic.getImage();
-			templateMatching(im, sign);
 			
+			cv::Mat im = ic.getImage();
+		  for( int i = 0; i < 8; i++){
+			  cv::Mat sign = cv::imread(image_array[i]);
+			  cv::resize(sign, sign, cv::Size(50,50));
+				templateMatching(im, sign);
+			}
 		}
   	ros::spinOnce();
   }
   
-  }
   return 0;
 }
