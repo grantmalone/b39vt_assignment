@@ -71,12 +71,14 @@ int main(int argc, char** argv)
   std::string image_array [8] = {"/home/turtlebot/green_helmet.png" , 
   															 "/home/turtlebot/biohazard.png" ,
   															 "/home/turtlebot/danger.png" ,
-  															 "/home/turtlebot/fire.png" ,
+  															 "/home/turtlebot/smoking.png" ,
   															 "/home/turtlebot/red_helmet.png" ,
   															 "/home/turtlebot/radioactive.png" ,
-  															 "/home/turtlebot/smoking.png" ,
-  															 "/home/turtlebot/toxic.png"};
+  															 "/home/turtlebot/toxic.png" ,
+  															 "/home/turtlebot/fire.png"};
  
+  
+
   
   while (ros::ok()) 
   {
@@ -84,13 +86,41 @@ int main(int argc, char** argv)
 		{
 			
 			cv::Mat im = ic.getImage();
+			int maximum = 0;
+			int winner = 99;
 		  for( int i = 0; i < 8; i++){
 			  cv::Mat sign = cv::imread(image_array[i]);
 			  cv::resize(sign, sign, cv::Size(200,200));
 				std::vector<cv::DMatch> matches = templateMatching(im, 			sign);
-				std::cout<<"number of matches: "<< matches.size();
+				
+				if (matches.size() > maximum) {
+					maximum = matches.size();
+					winner = i;
+					}
+				//std::cout<<"number of matches: "<< matches.size();
 				
 			}
+			std::string win;
+			if (winner == 0){
+			win = "Green Helmet";}
+			else if (winner == 1){
+			win = "Biohazard";}
+			else if (winner == 2){
+			win = "Danger";}
+			else if (winner == 3){
+			win = "Smoking";}
+			else if (winner == 4){
+			win = "Red Helmet";}
+			else if (winner == 5){
+			win = "Radioactive";}
+			else if (winner == 6){
+			win = "Toxic";}
+			else if (winner == 7){
+			win = "Fire";}
+			else{
+				std::cout << "boooo" <<std::endl;
+			}
+			std::cout<<"Best match: "<<win;
 		}
   	ros::spinOnce();
   }

@@ -69,14 +69,12 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
   cv::drawMatches( sign, keypoints_1, im, keypoints_2, good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
                 std::vector<char>(), cv::DrawMatchesFlags::DEFAULT  /*, cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS*/ );
 
-		/*int i = matches.size();
+		int i = matches.size();
 		std::stringstream ss;
     ss << i;
-    std::string str;
-    ss >> str;*/
+  
 
-
-//cv::putText(img_matches,str, cv::Point2f(100,100), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255,255));
+cv::putText(img_matches,ss.str(), cv::Point2f(100,300), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255,255));
 	 
 	
 	
