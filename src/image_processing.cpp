@@ -6,8 +6,11 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
   //int method = 0;
   //cv::ORB orb;
   cv::Mat descriptors_1, descriptors_2;
+   descriptors_1.convertTo(descriptors_1, CV_32F);
+   descriptors_2.convertTo(descriptors_2, CV_32F);
+  
   cv::OrbDescriptorExtractor extractor;
-  //cv::FREAK	 extractor; 
+ //	cv::FREAK extractor; 
   
   cv::OrbFeatureDetector detector(250, 1.2f, 8, 31, 0, 2, 0, 20);
 
@@ -26,7 +29,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 
 	cv::Mat result;
 	cv::Mat descriptors_object;
-	result.create( result_cols, result_rows, CV_32FC1 );
+	result.create( result_cols, result_rows, CV_32F ); //CV_32FC1
 
   if( !sign.data || !im.data )
    {  std::cout<<"no images loaded"; }
@@ -37,8 +40,8 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 
   //-- Step 3: Matching descriptor vectors with a brute force matcher
   std::vector<cv::DMatch> matches;
-  cv::BFMatcher matcher(cv::NORM_HAMMING2, true);
-  //cv::FlannBasedMatcher matcher;
+ 	//cv::BFMatcher matcher(cv::NORM_HAMMING2, true);
+  cv::FlannBasedMatcher matcher(new cv::flann::LshIndexParams(10,24,2));
   //std::vector<cv::DMatch> matches;
   matcher.match( descriptors_1, descriptors_2, matches );
   
@@ -68,15 +71,12 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 
   //-- Draw matches
   cv::Mat img_matches;
-  cv::drawMatches( sign, keypoints_1, im, keypoints_2, good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
-                std::vector<char>(), cv::DrawMatchesFlags::DEFAULT  /*, cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS*/ );
+  cv::drawMatches( sign, keypoints_1, im, keypoints_2, matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
+                std::vector<char>(), /*cv::DrawMatchesFlags::DEFAULT ,*/cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
 		int i = matches.size();
 		std::stringstream ss;
     ss << i;
-  
-  
-
 
 cv::putText(img_matches,ss.str(), cv::Point2f(100,460), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255,255));
 	 

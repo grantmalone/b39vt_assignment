@@ -88,10 +88,12 @@ int main(int argc, char** argv)
 			cv::Mat im = ic.getImage();
 			int maximum = 0;
 			int winner = 99;
+			int match_signs[8];
 		  for( int i = 0; i < 8; i++){
 			  cv::Mat sign = cv::imread(image_array[i]);
 			  cv::resize(sign, sign, cv::Size(450,450));
 				std::vector<cv::DMatch> matches = templateMatching(im, sign);
+				match_signs[i] = matches.size();
 				
 				if (matches.size() > maximum) {
 					maximum = matches.size();
@@ -101,24 +103,39 @@ int main(int argc, char** argv)
 				
 			}
 			std::string win;
-			if (winner == 0){
+			if (winner == 0){ if(match_signs[0]<130){win = "no matches";}
+			else
 			win = "Green Helmet";}
-			else if (winner == 1){
+			
+			else if (winner == 1){if(match_signs[1]<110){win = "no matches";}
+			else
 			win = "Biohazard";}
-			else if (winner == 2){
+			
+			else if (winner == 2){if(match_signs[2]<70){win = "no matches";}
+			else
 			win = "Danger";}
-			else if (winner == 3){
+			
+			else if (winner == 3){if(match_signs[3]<120){win = "no matches";}
+			else
 			win = "Smoking";}
-			else if (winner == 4){
+			
+			else if (winner == 4){if(match_signs[4]<130){win = "no matches";}
+			else
 			win = "Red Helmet";}
-			else if (winner == 5){
+			
+			else if (winner == 5){if(match_signs[5]<70){win = "no matches";}
+			else
 			win = "Radioactive";}
-			else if (winner == 6){
+			
+			else if (winner == 6){if(match_signs[6]<95){win = "no matches";}
+			else
 			win = "Toxic";}
-			else if (winner == 7){
+			
+			else if (winner == 7){if(match_signs[0]<60){win = "no matches";}
+			else
 			win = "Fire";}
 			else{
-				std::cout << "no matches" <<std::endl;
+				std::cout << "no matches found" <<std::endl;
 			}
 			ROS_INFO("best match: %s\n", win.c_str());
 		}
