@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <stdio.h>
 
 std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& templ);
 // Your code goes here

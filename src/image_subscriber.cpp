@@ -90,8 +90,8 @@ int main(int argc, char** argv)
 			int winner = 99;
 		  for( int i = 0; i < 8; i++){
 			  cv::Mat sign = cv::imread(image_array[i]);
-			  cv::resize(sign, sign, cv::Size(200,200));
-				std::vector<cv::DMatch> matches = templateMatching(im, 			sign);
+			  cv::resize(sign, sign, cv::Size(450,450));
+				std::vector<cv::DMatch> matches = templateMatching(im, sign);
 				
 				if (matches.size() > maximum) {
 					maximum = matches.size();
@@ -118,9 +118,9 @@ int main(int argc, char** argv)
 			else if (winner == 7){
 			win = "Fire";}
 			else{
-				std::cout << "boooo" <<std::endl;
+				std::cout << "no matches" <<std::endl;
 			}
-			std::cout<<"Best match: "<<win;
+			ROS_INFO("best match: %s\n", win.c_str());
 		}
   	ros::spinOnce();
   }
