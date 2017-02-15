@@ -2,7 +2,7 @@
 
 std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 {
-	int minHessian = 2000;
+	int minHessian = 400;
   //int method = 0;
   //cv::ORB orb;
   cv::Mat descriptors_1, descriptors_2;
@@ -49,7 +49,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
   
     //-- Quick calculation of max and min distance between keypoints
       
-  double max_dist = 0; double min_dist = 100;
+ double max_dist = 0; double min_dist = 100;
     
   for( int i = 0; i < descriptors_object.rows; i++)
   { double dist = matches[i].distance;
