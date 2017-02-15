@@ -28,7 +28,6 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 	int result_rows = im.rows - sign.rows + 1;
 
 	cv::Mat result;
-	cv::Mat descriptors_object;
 	result.create( result_cols, result_rows, CV_32F ); //CV_32FC1
 
   if( !sign.data || !im.data )
@@ -51,7 +50,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
       
  double max_dist = 0; double min_dist = 100;
     
-  for( int i = 0; i < descriptors_object.rows; i++)
+  for( int i = 0; i < matches.size(); i++)
   { double dist = matches[i].distance;
       if( dist < min_dist ) min_dist = dist;
       if( dist > max_dist ) max_dist = dist;
@@ -59,7 +58,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 
 	std::vector< cv::DMatch >good_matches;
 
-  for( int i = 0; i < descriptors_object.rows; i++ )
+  for( int i = 0; i < matches.size(); i++ )
   { 
   	if( matches[i].distance < (max_dist/1) )
     { 
@@ -71,10 +70,10 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 
   //-- Draw matches
   cv::Mat img_matches;
-  cv::drawMatches( sign, keypoints_1, im, keypoints_2, matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
+  cv::drawMatches( sign, keypoints_1, im, keypoints_2, good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
                 std::vector<char>(), /*cv::DrawMatchesFlags::DEFAULT ,*/cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
-		int i = matches.size();
+		int i = good_matches.size();
 		std::stringstream ss;
     ss << i;
 
@@ -86,5 +85,5 @@ cv::putText(img_matches,ss.str(), cv::Point2f(100,460), cv::FONT_HERSHEY_PLAIN, 
 	cv::imshow("Matches", img_matches );
 	//std::cout<<"	Matches: "<<matches.size();
 	cv::waitKey();
-	return matches;
+	return good_matches;
 }

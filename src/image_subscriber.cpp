@@ -92,11 +92,11 @@ int main(int argc, char** argv)
 		  for( int i = 0; i < 8; i++){
 			  cv::Mat sign = cv::imread(image_array[i]);
 			  cv::resize(sign, sign, cv::Size(450,450));
-				std::vector<cv::DMatch> matches = templateMatching(im, sign);
-				match_signs[i] = matches.size();
+				std::vector<cv::DMatch> good_matches = templateMatching(im, sign);
+				match_signs[i] = good_matches.size();
 				
-				if (matches.size() > maximum) {
-					maximum = matches.size();
+				if (good_matches.size() > maximum) {
+					maximum = good_matches.size();
 					winner = i;
 					}
 				//std::cout<<"number of matches: "<< matches.size();
