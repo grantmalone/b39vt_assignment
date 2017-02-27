@@ -6,6 +6,7 @@
 #include "message_filters/subscriber.h"
 #include "laser_geometry/laser_geometry.h"
 #include "geometry_msgs/Twist.h"
+//#include <move_base_msgs/MoveBaseAction.h>
 
 #include "b39vt_assignment/avoid.hpp"
 
@@ -42,7 +43,8 @@ void LaserSubscriber::publish(const sensor_msgs::LaserScan& msg){
    
 	geometry_msgs::Twist vel;
    
-	vel.linear.x = 0.25;
+  float linearx = 0.25;
+	vel.linear.x = linearx;
 	vel.linear.y = 0;
 	vel.linear.z = 0;
 	vel.angular.x = 0;
@@ -50,16 +52,17 @@ void LaserSubscriber::publish(const sensor_msgs::LaserScan& msg){
 	vel.angular.z = 0;
 	
 	ROS_INFO("Publishing message");
-		
   
   //ROS_INFO("Min Value: ");
   //ROS_INFO(min_element(msg.ranges,msg.ranges+len);
   float min = 10000;
   float max = 0;
-  for (int i = 0;i<msg.ranges.size();i++){
+  for (int i = 127.75;i<(msg.ranges.size()-127.75);i++){
   if(msg.ranges[i] < min && msg.ranges[i]>0.15){min = msg.ranges[i];}
   if(msg.ranges[i] > max){max = msg.ranges[i];}
   }
+  
+  
   ROS_WARN_STREAM("Min value :"<< min);
   ROS_WARN_STREAM("Max value :"<< max);
   
@@ -68,8 +71,23 @@ void LaserSubscriber::publish(const sensor_msgs::LaserScan& msg){
   vel.linear.x = 0;
   vel_pub_.publish(vel);
   
+  float minr = 10000;
+  float minl = 10000;
+  //right side
+  for (int i = 383.25;i<(msg.ranges.size());i++){
+  if(msg.ranges[i] < minr && msg.ranges[i]>0.15){minr = msg.ranges[i];}
+  }
+  //left side
+  for (int i = 0;i<(msg.ranges.size()-383.25);i++){
+  if(msg.ranges[i] < minl && msg.ranges[i]>0.15){minl = msg.ranges[i];}
+  }
+  float angularv = 0;
   
-  vel.angular.z = 0.5;
+  if(minl > minr){angularv = -0.9;}
+  else {angularv = 0.9;}
+  
+  
+  vel.angular.z = angularv;
   vel_pub_.publish(vel);
   
   };
