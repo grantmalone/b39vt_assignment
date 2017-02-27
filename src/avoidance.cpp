@@ -6,7 +6,6 @@
 #include "message_filters/subscriber.h"
 #include "laser_geometry/laser_geometry.h"
 #include "geometry_msgs/Twist.h"
-//#include <move_base_msgs/MoveBaseAction.h>
 
 #include "b39vt_assignment/avoid.hpp"
 
@@ -52,9 +51,7 @@ void LaserSubscriber::publish(const sensor_msgs::LaserScan& msg){
 	vel.angular.z = 0;
 	
 	ROS_INFO("Publishing message");
-  
-  //ROS_INFO("Min Value: ");
-  //ROS_INFO(min_element(msg.ranges,msg.ranges+len);
+
   float min = 10000;
   float max = 0;
   for (int i = 127.75;i<(msg.ranges.size()-127.75);i++){
@@ -82,6 +79,19 @@ void LaserSubscriber::publish(const sensor_msgs::LaserScan& msg){
   if(msg.ranges[i] < minl && msg.ranges[i]>0.15){minl = msg.ranges[i];}
   }
   float angularv = 0;
+  
+  //both
+  if(minr<0.5 && minl<0.5){
+  
+  ros::Time start2 = ros::Time::now();
+	while(ros::Time::now() - start2 < ros::Duration(0.2))
+	{
+	vel.linear.x = linearx/-2;
+	vel_pub_.publish(vel);
+	}
+  if(minl > minr){angularv = -0.9;}
+  else {angularv = 0.9;}
+  } 
   
   if(minl > minr){angularv = -0.9;}
   else {angularv = 0.9;}
