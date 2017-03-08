@@ -1,0 +1,4 @@
+<launch>
+  <node name="avoidance" pkg="b39vt_assignment" type="avoid" />
+  <node name="laser" pkg="hokuyo_node" type="hokuyo_node" />
+</launch>
