@@ -27,7 +27,7 @@ public:
   ImageSubscriber() : it_(nh_), data_valid(false)
   {
     // Subscribe to input video feed
-    image_sub_ = it_.subscribe("/usb_cam/image_raw", 1, 
+    image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, 
       &ImageSubscriber::imageCb, this);
   }
 

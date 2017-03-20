@@ -62,6 +62,6 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 	cv::putText(img_matches,ss.str(), cv::Point2f(100,460), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255,255));
 
 	cv::imshow("Matches", img_matches );
-	cv::waitKey();
+	cv::waitKey(10);
 	return good_matches;
 }
