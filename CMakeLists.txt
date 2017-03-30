@@ -137,13 +137,18 @@ include_directories(
 # add_dependencies(b39vt_assignment ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(avoid src/avoidance.cpp src/avoidance.cpp)
+add_executable(image src/image_subscriber_2.cpp src/image_processing_2.cpp)
+#add_executable(avoid src/avoidance.cpp src/avoidance.cpp)
+add_executable(avoid src/avoid_new.cpp src/avoid_new.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(avoid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(image ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(image
+  ${catkin_LIBRARIES}
+)
 target_link_libraries(avoid
   ${catkin_LIBRARIES}
 )

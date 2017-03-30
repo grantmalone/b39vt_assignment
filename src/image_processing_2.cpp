@@ -43,13 +43,13 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 	
   for( int i = 0; i < matches.size(); i++ )
   { 
-  	if( matches[i].distance < (max_dist/2) )
+  	if( matches[i].distance < (max_dist/2.5) )
     { 
     	good_matches.push_back( matches[i]); 
     }
   }
   
-  //Draws good_matches
+  /*//Draws good_matches
   cv::Mat img_matches;
   cv::drawMatches( sign, keypoints_1, im, keypoints_2, good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
                 std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
@@ -64,7 +64,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
 	cv::putText(img_matches,ss.str(), cv::Point2f(100,460), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255,255));
 
 	cv::imshow("Matches", img_matches );
-	cv::waitKey(10);
+	//cv::waitKey(10);*/
 	
 	return good_matches;
 }

@@ -36,6 +36,7 @@ public:
         image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1,
             &ImageSubscriber::imageCb, this);
             
+            
         depth_sub_ = it_.subscribe("/camera/depth_registered/image", 1,
             &ImageSubscriber::depthCb, this);
             
@@ -87,6 +88,7 @@ public:
 int main(int argc, char** argv)
 {
     try {
+    	 ROS_INFO_STREAM("debug " );
         ros::init(argc, argv, "image_subscriber");
         ros::NodeHandle n;
         ImageSubscriber ic;
@@ -154,30 +156,38 @@ int main(int argc, char** argv)
                     win = "Fire";
                 }
                 else {
-                    std::cout << "no matches" << std::endl;
+                    ROS_INFO("no matches found");
                 }
-                if (match_signs[winner] < 20) {
+                if ((match_signs[winner] < 7) or (dep.at<double>(160,240) > 0.8)) {
                     ROS_INFO("no matches found  ");
                 }
                 else {
                     ROS_INFO("best match: %s\n", win.c_str());
+                    ROS_INFO_STREAM("NO OF MATCHES: " << match_signs[winner]);
+                    if (std::isnan(dep.at<double>(320,240))){
+                    dep = 0.50;
+                    ROS_INFO_STREAM("DEPTH:::: " << dep.at<double>(320,240));
+                    } 
+                    else{
                     ROS_INFO_STREAM("DEPTH: " << dep.at<double>(320,240));
+                     geometry_msgs::PointStamped point;
                     
-                    geometry_msgs::PointStamped point;
-                    
-                    point.point.x = 320;
-                    point.point.y = 240;
+                    point.point.x = 0;
+                    point.point.y = 0;
                     point.point.z = dep.at<double>(320,240);
                     
                     point.header.frame_id = "camera_rgb_optical_frame";
                     depth_pub_.publish(point);
+                    }
+                    
+                   
                 }
             }
             ros::spinOnce();
         }
     }
     catch (cv::Exception& e) {
-        std::cout << "no matches found";
+         ROS_INFO("no matches found");
     }
     return 0;
 }

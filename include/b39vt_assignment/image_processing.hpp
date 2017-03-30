@@ -9,6 +9,8 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
+#include <ros/console.h>
+#include "geometry_msgs/PointStamped.h"
 
 std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& templ);
 // Your code goes here
