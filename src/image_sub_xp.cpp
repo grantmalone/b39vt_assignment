@@ -37,7 +37,7 @@ public:
             &ImageSubscriber::imageCb, this);
             
             
-        depth_sub_ = it_.subscribe("/camera/depth_registered/image", 1,
+        depth_sub_ = it_.subscribe("/camera/depth_registered/image_throttled", 1,
             &ImageSubscriber::depthCb, this);
             
     }
@@ -92,7 +92,15 @@ int main(int argc, char** argv)
         ros::init(argc, argv, "image_subscriber");
         ros::NodeHandle n;
         ImageSubscriber ic;
-        ros::Publisher depth_pub_ = n.advertise<geometry_msgs::PointStamped>("depth", 3);
+        
+        ros::Publisher depth_pub_green_helmet = n.advertise<geometry_msgs::PointStamped>("depth_gh", 3);
+        ros::Publisher depth_pub_biohazard = n.advertise<geometry_msgs::PointStamped>("depth_bh", 3);
+        ros::Publisher depth_pub_danger = n.advertise<geometry_msgs::PointStamped>("depth_d", 3);
+        ros::Publisher depth_pub_smoking = n.advertise<geometry_msgs::PointStamped>("depth_s", 3);
+        ros::Publisher depth_pub_red_helmet = n.advertise<geometry_msgs::PointStamped>("depth_rh", 3);
+        ros::Publisher depth_pub_radioactive = n.advertise<geometry_msgs::PointStamped>("depth_ra", 3);
+        ros::Publisher depth_pub_toxic = n.advertise<geometry_msgs::PointStamped>("depth_t", 3);
+        ros::Publisher depth_pub_fire = n.advertise<geometry_msgs::PointStamped>("depth_f", 3);
 
         std::string image_array[8] = { "/home/turtlebot/green_helmet.png",
             "/home/turtlebot/biohazard.png",
@@ -120,7 +128,7 @@ int main(int argc, char** argv)
                 int match_signs[8];
                 for (int i = 0; i < 8; i++) {
                     cv::Mat sign = cv::imread(image_array[i]);
-                    cv::resize(sign, sign, cv::Size(450, 450));
+                    cv::resize(sign, sign, cv::Size(250, 250));
                     std::vector<cv::DMatch> good_matches = templateMatching(im, sign);
                     match_signs[i] = good_matches.size();
 
@@ -177,7 +185,33 @@ int main(int argc, char** argv)
                     point.point.z = dep.at<double>(320,240);
                     
                     point.header.frame_id = "camera_rgb_optical_frame";
-                    depth_pub_.publish(point);
+                    
+                if (winner == 0) {
+                    depth_pub_green_helmet.publish(point);
+                }
+                else if (winner == 1) {
+                    depth_pub_biohazard.publish(point);
+                }
+                else if (winner == 2) {
+                    depth_pub_danger.publish(point);
+                }
+                else if (winner == 3) {
+                    depth_pub_smoking.publish(point);
+                }
+                else if (winner == 4) {
+                    depth_pub_red_helmet.publish(point);
+                }
+                else if (winner == 5) {
+                    depth_pub_radioactive.publish(point);
+                }
+                else if (winner == 6) {
+                    depth_pub_toxic.publish(point);
+                }
+                else if (winner == 7) {
+                    depth_pub_fire.publish(point);
+                }                    
+                    
+                    
                     }
                     
                    

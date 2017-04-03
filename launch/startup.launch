@@ -1,10 +1,16 @@
 <launch>
 	<node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0 0 0 0 0 0 base_link laser 10" />
   <node pkg="tf" type="static_transform_publisher" name="baselink_broadcaster" args="0 0 0 0 0 0 odom base_link 10" />
-  <node name="!--avoidance" pkg="b39vt_assignment" type="avoid" /-->
-  <node name="image_rec" pkg="b39vt_assignment" type="image" output="screen"/>
-  <node name="laser" pkg="hokuyo_node" type="hokuyo_node" />
+  <node name="match_throttler" type="throttle" pkg="topic_tools" args="messages /camera/rgb/image_raw 0.5 /camera/rgb/image_raw_throttled" />
+  <node name="depth_throttler" type="throttle" pkg="topic_tools" args="messages /camera/depth_registered/image 0.5 /camera/depth_registered/image_throttled" />
+  <!--node name="laser" pkg="hokuyo_node" type="hokuyo_node" /-->
   <!--node name="mapping" pkg="hector_mapping" type="hector_mapping" /-->
+  
+  <!--include file="$(find turtlebot_bringup)/launch/3dsensor.launch"/-->
+  <!--include file="$(find freenect_launch)/launch/freenect.launch"/-->
+  
+  <node name="image_rec" pkg="b39vt_assignment" type="image" output="screen"/>
+  <!--node name="avoidance" pkg="b39vt_assignment" type="avoid" /-->
   
   <!--node pkg="hector_geotiff" type="geotiff_node" name="hector_geotiff_node" output="screen" launch-prefix="nice -n 15">
     <remap from="map" to="/dynamic_map" />
@@ -14,6 +20,6 @@
     <param name="draw_background_checkerboard" type="bool" value="true" />
     <param name="draw_free_space_grid" type="bool" value="true" />
   </node-->
-  <node name="foo_throttler" type="throttle" pkg="topic_tools" args="messages /camera/rgb/image_raw 1 /camera/rgb/image_raw_throttled" />
+  
 
 </launch>
