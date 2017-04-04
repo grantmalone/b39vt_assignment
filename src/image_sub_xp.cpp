@@ -24,7 +24,6 @@ public:
     // variables from the declaration/definition of methods
     bool data_valid;
     bool depth_valid;
-    
 
 public:
     // Public methods
@@ -35,18 +34,15 @@ public:
         // Subscribe to input video feed
         image_sub_ = it_.subscribe("/camera/rgb/image_raw_throttled", 1,
             &ImageSubscriber::imageCb, this);
-            
-            
+
         depth_sub_ = it_.subscribe("/camera/depth_registered/image_throttled", 1,
             &ImageSubscriber::depthCb, this);
-            
     }
 
     ~ImageSubscriber()
     {
         cv::destroyWindow(OPENCV_WINDOW);
     }
-
 
     void imageCb(const sensor_msgs::ImageConstPtr& msg)
     {
@@ -59,8 +55,8 @@ public:
             return;
         }
     }
-    
-     void depthCb(const sensor_msgs::ImageConstPtr& msg)
+
+    void depthCb(const sensor_msgs::ImageConstPtr& msg)
     {
         try {
             cv_ptr_ = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::TYPE_64FC1); //assigns pointer
@@ -71,28 +67,27 @@ public:
             return;
         }
     }
-    
-    
+
     //retrieves webcam image
     cv::Mat getImage()
     {
         return cv_ptr->image;
     }
-    
+
     cv::Mat getDepth()
     {
-    	return cv_ptr_->image;
+        return cv_ptr_->image;
     }
 };
 
 int main(int argc, char** argv)
 {
     try {
-    	 ROS_INFO_STREAM("debug " );
+        ROS_INFO_STREAM("debug ");
         ros::init(argc, argv, "image_subscriber");
         ros::NodeHandle n;
         ImageSubscriber ic;
-        
+
         ros::Publisher depth_pub_green_helmet = n.advertise<geometry_msgs::PointStamped>("depth_gh", 3);
         ros::Publisher depth_pub_biohazard = n.advertise<geometry_msgs::PointStamped>("depth_bh", 3);
         ros::Publisher depth_pub_danger = n.advertise<geometry_msgs::PointStamped>("depth_d", 3);
@@ -115,20 +110,19 @@ int main(int argc, char** argv)
             if (ic.data_valid and ic.depth_valid) {
                 cv::Mat im = ic.getImage();
                 cv::Mat dep = ic.getDepth();
-                
-                
-               /* dep.height
+
+                /* dep.height
                 dep.width
                 
                 dep.rows
                 dep.cols*/
-                
+
                 int maximum = 0;
                 int winner = 99;
                 int match_signs[8];
                 for (int i = 0; i < 8; i++) {
                     cv::Mat sign = cv::imread(image_array[i]);
-                    cv::resize(sign, sign, cv::Size(250, 250));
+                    cv::resize(sign, sign, cv::Size(200, 200));
                     std::vector<cv::DMatch> good_matches = templateMatching(im, sign);
                     match_signs[i] = good_matches.size();
 
@@ -138,15 +132,18 @@ int main(int argc, char** argv)
                     }
                 }
                 std::string win;
-                
+
                 if (winner == 0) {
                     win = "Green Helmet";
                 }
                 else if (winner == 1) {
                     win = "Biohazard";
                 }
-                else if (winner == 2) {
+                else if (winner == 2 and match_signs[2] > 15) {
                     win = "Danger";
+                }
+                else if (winner == 2 and match_signs[2] < 16) {
+                    match_signs[2] = 0;
                 }
                 else if (winner == 3) {
                     win = "Smoking";
@@ -166,62 +163,58 @@ int main(int argc, char** argv)
                 else {
                     ROS_INFO("no matches found");
                 }
-                if ((match_signs[winner] < 7) or (dep.at<double>(160,240) > 0.8)) {
+                if ((match_signs[winner] < 8) or (dep.at<double>(160, 240) > 0.8)) {
                     ROS_INFO("no matches found  ");
                 }
                 else {
                     ROS_INFO("best match: %s\n", win.c_str());
                     ROS_INFO_STREAM("NO OF MATCHES: " << match_signs[winner]);
-                    if (std::isnan(dep.at<double>(320,240))){
-                    dep = 0.50;
-                    ROS_INFO_STREAM("DEPTH:::: " << dep.at<double>(320,240));
-                    } 
-                    else{
-                    ROS_INFO_STREAM("DEPTH: " << dep.at<double>(320,240));
-                     geometry_msgs::PointStamped point;
-                    
-                    point.point.x = 0;
-                    point.point.y = 0;
-                    point.point.z = dep.at<double>(320,240);
-                    
-                    point.header.frame_id = "camera_rgb_optical_frame";
-                    
-                if (winner == 0) {
-                    depth_pub_green_helmet.publish(point);
-                }
-                else if (winner == 1) {
-                    depth_pub_biohazard.publish(point);
-                }
-                else if (winner == 2) {
-                    depth_pub_danger.publish(point);
-                }
-                else if (winner == 3) {
-                    depth_pub_smoking.publish(point);
-                }
-                else if (winner == 4) {
-                    depth_pub_red_helmet.publish(point);
-                }
-                else if (winner == 5) {
-                    depth_pub_radioactive.publish(point);
-                }
-                else if (winner == 6) {
-                    depth_pub_toxic.publish(point);
-                }
-                else if (winner == 7) {
-                    depth_pub_fire.publish(point);
-                }                    
-                    
-                    
+                    if (std::isnan(dep.at<double>(320, 240))) {
+                        dep = 0.50;
+                        ROS_INFO_STREAM("DEPTH:::: " << dep.at<double>(320, 240));
                     }
-                    
-                   
+                    else {
+                        ROS_INFO_STREAM("DEPTH: " << dep.at<double>(320, 240));
+                        geometry_msgs::PointStamped point;
+
+                        point.point.x = 0;
+                        point.point.y = 0;
+                        point.point.z = dep.at<double>(320, 240);
+
+                        point.header.frame_id = "camera_rgb_optical_frame";
+
+                        if (winner == 0) {
+                            depth_pub_green_helmet.publish(point);
+                        }
+                        else if (winner == 1) {
+                            depth_pub_biohazard.publish(point);
+                        }
+                        else if (winner == 2) {
+                            depth_pub_danger.publish(point);
+                        }
+                        else if (winner == 3) {
+                            depth_pub_smoking.publish(point);
+                        }
+                        else if (winner == 4) {
+                            depth_pub_red_helmet.publish(point);
+                        }
+                        else if (winner == 5) {
+                            depth_pub_radioactive.publish(point);
+                        }
+                        else if (winner == 6) {
+                            depth_pub_toxic.publish(point);
+                        }
+                        else if (winner == 7) {
+                            depth_pub_fire.publish(point);
+                        }
+                    }
                 }
             }
             ros::spinOnce();
         }
     }
     catch (cv::Exception& e) {
-         ROS_INFO("no matches found");
+        ROS_INFO("no matches found");
     }
     return 0;
 }
