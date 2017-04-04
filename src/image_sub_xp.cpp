@@ -19,6 +19,7 @@ class ImageSubscriber {
     cv_bridge::CvImagePtr cv_ptr_; //pointer depth
     const std::string OPENCV_WINDOW;
 
+
 public:
     // Public variables - it is a good practice to separate the declaration of
     // variables from the declaration/definition of methods

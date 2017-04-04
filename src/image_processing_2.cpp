@@ -65,4 +65,7 @@ std::vector<cv::DMatch> templateMatching(const cv::Mat& im, const cv::Mat& sign)
     cv::waitKey(10);
 
     return good_matches;
+
 }
+
+
